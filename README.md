@@ -60,8 +60,8 @@ Yes — because the UI is a pure client-side React SPA, you can host the built a
 
 1. In your repo settings → Pages → Source = GitHub Actions (or enable the workflow below).
 2. Push the code (or use the Action on main).
-   - If your repo is named `<user>.github.io` (user/organization site) → site will be at `https://<you>.github.io/`
-   - Otherwise (project site) → site will be at `https://<you>.github.io/<repo>/`
+   - Only if the repo name **exactly** matches your GitHub username + `.github.io` (real user/org site) → `https://<you>.github.io/`
+   - For everything else (including `alocalstack.github.io` under a different username) → `https://<you>.github.io/<repo>/` (example: https://tmrocha89.github.io/alocalstack.github.io/)
 3. On your machine, start LocalStack with CORS enabled for GitHub + your future tunnel:
    ```bash
    docker run --rm -p 4566:4566 \

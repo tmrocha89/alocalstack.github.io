@@ -1,7 +1,8 @@
 # GitHub Pages deploy for alocalstack (static Vite build)
 # Triggered on push to main. Deploys using GitHub Actions.
 # The app is pure client-side; at runtime the user configures their own LocalStack endpoint (tunnel recommended for https-hosted Pages).
-# Automatically uses base=/ for *.github.io user/org sites, otherwise /repo-name/.
+# Automatically uses base=/ only for real user/org sites (repo name exactly matches <owner>.github.io).
+# For any other repo (including ones named *.github.io under a different owner), uses /<repo-name>/.
 
 name: Deploy to GitHub Pages
 
@@ -35,16 +36,18 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Determine base path (root for *.github.io user/org sites)
+      - name: Determine base path (root ONLY for real <owner>.github.io user/org sites)
         id: base
         shell: bash
         run: |
           REPO_NAME="${{ github.event.repository.name }}"
-          if [[ "$REPO_NAME" == *.github.io ]]; then
+          OWNER="${{ github.repository_owner }}"
+          if [[ "${REPO_NAME,,}" == "${OWNER,,}.github.io" ]]; then
             echo "base=/" >> $GITHUB_OUTPUT
-            echo "Detected user/org site repo - using base=/"
+            echo "Detected real user/org site (${REPO_NAME}) - using base=/"
           else
             echo "base=/$REPO_NAME/" >> $GITHUB_OUTPUT
+            echo "Project site - using base=/$REPO_NAME/"
           fi
 
       - name: Build for GitHub Pages
